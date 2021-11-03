@@ -1,2 +1,2 @@
-# Team7_TTS_NLP
+# Team6_TTS_NLP
 Paper Replication of FastSpeech2
