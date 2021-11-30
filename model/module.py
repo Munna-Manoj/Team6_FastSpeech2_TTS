@@ -3,10 +3,13 @@ import torch as t
 import torch.nn.functional as F
 import math
 import hyperparams as hp
-from text.symbols import symbols
 import numpy as np
 import copy
 from collections import OrderedDict
+import sys
+
+sys.path.append('../')
+from text.symbols import symbols
 
 def clones(module, N):
     return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
@@ -134,10 +137,7 @@ class FFN(nn.Module):
 
 
         # residual connection
-        x = x + input_ 
-
-        # dropout
-        # x = self.dropout(x) 
+        x = x + input_
 
         # layer normalization
         x = self.layer_norm(x) 
@@ -452,4 +452,25 @@ class Highwaynet(nn.Module):
             c = 1. - t_
             out = h * t_ + out * c
 
+        return out
+
+
+class Stoplinear(nn.Module):
+    '''
+    Adding hidden layer to stopplinear to improve it
+    '''
+
+    def __init__(self, input_size, p=0.1):
+        super(Stoplinear, self).__init__()
+        self.input_size = input_size
+        self.hidden_size = input_size // 3
+        self.layers = nn.Sequential(OrderedDict([
+            ('fc1', Linear(self.input_size, self.hidden_size, w_init='sigmoid')),
+            ('activation', nn.ReLU()),
+            ('dropout', nn.Dropout(p)),
+            ('fc2', Linear(self.hidden_size, 1, w_init='sigmoid'))
+        ]))
+
+    def forward(self, input_):
+        out = self.layers(input_)
         return out

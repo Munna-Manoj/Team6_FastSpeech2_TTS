@@ -1,7 +1,7 @@
 from module import *
 from utils import get_positional_table, get_sinusoid_encoding_table
 import sys
-sys.path.append('..')
+sys.path.append('../')
 import hyperparams as hp
 
 class Encoder(nn.Module):
@@ -72,7 +72,7 @@ class MelDecoder(nn.Module):
         self.dotattn_layers = clones(Attention(num_hidden), 3)
         self.ffns = clones(FFN(num_hidden), 3)
         self.mel_linear = Linear(num_hidden, hp.num_mels * hp.outputs_per_step)
-        self.stop_linear = Linear(num_hidden, 1, w_init='sigmoid')
+        self.stop_linear = Stoplinear(num_hidden)
 
         self.postconvnet = PostConvNet(num_hidden)
 
