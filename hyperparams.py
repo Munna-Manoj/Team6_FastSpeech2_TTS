@@ -23,7 +23,7 @@ save_step = 2000
 image_step = 500
 batch_size = 32
 
-cleaners='english_cleaners'
+cleaners='english_cleaners' #'korean_cleaners'
 
 data_path = './data/LJSpeech-1.1'
 #korean_data_path = ''

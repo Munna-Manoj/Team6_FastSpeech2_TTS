@@ -1,4 +1,4 @@
-from module import *
+from .module import *
 from utils import get_positional_table, get_sinusoid_encoding_table
 import sys
 sys.path.append('../')

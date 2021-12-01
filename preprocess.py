@@ -65,7 +65,8 @@ class PostDatasets(Dataset):
         wav_name = os.path.join(self.root_dir, self.landmarks_frame.iloc[idx, 0]) + '.wav'
         mel = np.load(wav_name[:-4] + '.pt.npy')
         mag = np.load(wav_name[:-4] + '.mag.npy')
-        sample = {'mel':mel, 'mag':mag}
+        dur = np.load(wav_name[:-4] + '.dur.npy')
+        sample = {'mel':mel, 'mag':mag, 'dur':dur}
 
         return sample
     
@@ -77,6 +78,7 @@ def collate_fn_transformer(batch):
         text = [d['text'] for d in batch]
         mel = [d['mel'] for d in batch]
         mel_input = [d['mel_input'] for d in batch]
+        #dur = [d['dur'] for d in batch]
         text_length = [d['text_length'] for d in batch]
         pos_mel = [d['pos_mel'] for d in batch]
         pos_text= [d['pos_text'] for d in batch]

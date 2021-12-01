@@ -5,6 +5,7 @@ from scipy import signal
 import hyperparams as hp
 import torch as t
 
+
 def get_spectrograms(fpath):
     '''Parse the wave file in `fpath` and
     Returns normalized melspectrogram and linear spectrogram.
@@ -50,6 +51,23 @@ def get_spectrograms(fpath):
 
     return mel, mag
 
+
+def get_duration(fpath):
+    '''Parse the wave file in `fpath` and
+    Returns normalized melspectrogram and linear spectrogram.
+    Args:
+      fpath: A string. The full path of a sound file.
+    Returns:
+      mel: A 2d array of shape (T, n_mels) and dtype of float32.
+      mag: A 2d array of shape (T, 1+n_fft/2) and dtype of float32.
+    '''
+    # Loading sound file
+    y, sr = librosa.load(fpath, sr=hp.sr)
+
+    dur = librosa.get_duration(y=y, sr=sr)
+
+    return dur
+
 def spectrogram2wav(mag):
     '''# Generate wave file from linear magnitude spectrogram
     Args:
@@ -76,6 +94,9 @@ def spectrogram2wav(mag):
     wav, _ = librosa.effects.trim(wav)
 
     return wav.astype(np.float32)
+
+
+
 
 def griffin_lim(spectrogram):
     '''Applies Griffin-Lim's raw.'''
