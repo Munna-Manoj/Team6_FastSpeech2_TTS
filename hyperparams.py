@@ -33,4 +33,3 @@ sample_path = './samples'
 sampling_rate =  22050
 hop_length = 256
 filter_length = 1024
-

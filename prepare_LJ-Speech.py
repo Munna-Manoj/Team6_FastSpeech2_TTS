@@ -17,7 +17,6 @@ class PrepareDataset(Dataset):
         Args:
             csv_file (string): Path to the csv file with annotations.
             root_dir (string): Directory with all the wavs.
-
         """
         self.landmarks_frame = pd.read_csv(csv_file, sep='|', header=None)
         self.root_dir = root_dir
