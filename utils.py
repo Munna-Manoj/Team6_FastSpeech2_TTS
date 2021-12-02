@@ -51,6 +51,15 @@ def get_spectrograms(fpath):
 
     return mel, mag
 
+def get_energy(fpath):
+    y,sr = librosa.load(fpath, sr = hp.sr)
+    hop_length = 256
+    frame_length = 512
+    energy = np.array([
+        sum(abs(y[i:i+frame_length]**2))
+        for i in range(0,len(x),hop_length)
+        ])
+
 
 def get_duration(fpath):
     '''Parse the wave file in `fpath` and
@@ -61,7 +70,7 @@ def get_duration(fpath):
       mel: A 2d array of shape (T, n_mels) and dtype of float32.
       mag: A 2d array of shape (T, 1+n_fft/2) and dtype of float32.
     '''
-    # Loading sound file
+ # Loading sound file
     y, sr = librosa.load(fpath, sr=hp.sr)
 
     dur = librosa.get_duration(y=y, sr=sr)
@@ -73,7 +82,8 @@ def spectrogram2wav(mag):
     Args:
       mag: A numpy array of (T, 1+n_fft//2)
     Returns:
-      wav: A 1-D numpy array.
+ 
+ wav: A 1-D numpy array.
     '''
     # transpose
     mag = mag.T
