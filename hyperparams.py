@@ -23,22 +23,13 @@ save_step = 2000
 image_step = 500
 batch_size = 32
 
-'''
-english = True
-if english:
-	cleaners= 'english_cleaners'
-	data_path = './data/LJSpeech-1.1'
-else:
-	cleaners= 'korean_cleaners'  # 'english_cleaners'
-	data_path = './data/kss' #  './data/LJSpeech-1.1'
-'''
+cleaners='english_cleaners' #'korean_cleaners'
 
-#cleaners= 'english_cleaners'
-#data_path = './data/LJSpeech-1.1'
-
-cleaners= 'korean_cleaners'  
-data_path = './data/kss' #  
-
-
+data_path = './data/LJSpeech-1.1'
+#korean_data_path = ''
 checkpoint_path = './checkpoints'
 sample_path = './samples'
+
+sampling_rate =  22050
+hop_length = 256
+filter_length = 1024
