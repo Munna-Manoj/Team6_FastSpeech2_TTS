@@ -4,7 +4,12 @@ import os, copy
 from scipy import signal
 import hyperparams as hp
 import torch as t
-
+def get_pitch(fpath):
+    y,sr = librosa.load(fpath, sr = hp.sr)
+    f0, _ = pw.dio(y.astype(np.float64), hp.sampling_rate, frame_period = hp.hop_lenth/hp.sampling_rate*1000)
+    duration = get_duration(fpath)
+    f0 = f0[:sum(duration)]
+    return f0
 
 def get_spectrograms(fpath):
     '''Parse the wave file in `fpath` and
