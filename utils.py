@@ -4,11 +4,13 @@ import os, copy
 from scipy import signal
 import hyperparams as hp
 import torch as t
+import pyworld as pw
 def get_pitch(fpath):
     y,sr = librosa.load(fpath, sr = hp.sr)
-    f0, _ = pw.dio(y.astype(np.float64), hp.sampling_rate, frame_period = hp.hop_lenth/hp.sampling_rate*1000)
-    duration = get_duration(fpath)
-    f0 = f0[:sum(duration)]
+    f0, _ = pw.dio(y.astype(np.float64), hp.sampling_rate, frame_period = hp.hop_length/hp.sampling_rate*1000)
+    #print(f0)
+    # duration = get_duration(fpath)
+    # f0 = f0[:sum(duration)]
     return f0
 
 def get_spectrograms(fpath):
@@ -62,8 +64,10 @@ def get_energy(fpath):
     frame_length = 512
     energy = np.array([
         sum(abs(y[i:i+frame_length]**2))
-        for i in range(0,len(x),hop_length)
+        for i in range(0,len(y),hop_length)
         ])
+    #print(energy)
+    return energy
 
 
 def get_duration(fpath):

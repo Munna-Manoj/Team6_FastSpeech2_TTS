@@ -29,3 +29,8 @@ data_path = './data/LJSpeech-1.1'
 #korean_data_path = ''
 checkpoint_path = './checkpoints'
 sample_path = './samples'
+
+sampling_rate =  22050
+hop_length = 256
+filter_length = 1024
+

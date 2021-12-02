@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 import os
-from utils import get_spectrograms, get_duration
+from utils import get_spectrograms, get_duration, get_energy, get_pitch
 import hyperparams as hp
 import librosa
 
@@ -31,15 +31,19 @@ class PrepareDataset(Dataset):
     def __getitem__(self, idx):
         wav_name = os.path.join(self.root_dir, self.landmarks_frame.iloc[idx, 0]) + '.wav'
         mel, mag = get_spectrograms(wav_name)
-        
+        energy = get_energy(wav_name)
+        pitch = get_pitch(wav_name)
         dur = get_duration(wav_name)
-        print(dur)
+        #print(energy)
+        #print(pitch)
         
         np.save(wav_name[:-4] + '.pt', mel)
         np.save(wav_name[:-4] + '.mag', mag)
         np.save(wav_name[:-4] + '.dur', dur)
+        np.save(wav_name[:-4] + '.eng', energy)
+        np.save(wav_name[:-4] + '.pth', pitch)
 
-        sample = {'mel':mel, 'mag': mag, 'dur': dur}
+        sample = {'mel':mel, 'mag': mag, 'dur': dur, 'energy': energy, 'pitch':pitch}
         # + duration
 
         return sample
