@@ -4,7 +4,14 @@ import os, copy
 from scipy import signal
 import hyperparams as hp
 import torch as t
-
+import pyworld as pw
+def get_pitch(fpath):
+    y,sr = librosa.load(fpath, sr = hp.sr)
+    f0, _ = pw.dio(y.astype(np.float64), hp.sampling_rate, frame_period = hp.hop_length/hp.sampling_rate*1000)
+    #print(f0)
+    # duration = get_duration(fpath)
+    # f0 = f0[:sum(duration)]
+    return f0
 
 def get_spectrograms(fpath):
     '''Parse the wave file in `fpath` and
@@ -51,6 +58,17 @@ def get_spectrograms(fpath):
 
     return mel, mag
 
+def get_energy(fpath):
+    y,sr = librosa.load(fpath, sr = hp.sr)
+    hop_length = 256
+    frame_length = 512
+    energy = np.array([
+        sum(abs(y[i:i+frame_length]**2))
+        for i in range(0,len(y),hop_length)
+        ])
+    #print(energy)
+    return energy
+
 
 def get_duration(fpath):
     '''Parse the wave file in `fpath` and
@@ -61,7 +79,7 @@ def get_duration(fpath):
       mel: A 2d array of shape (T, n_mels) and dtype of float32.
       mag: A 2d array of shape (T, 1+n_fft/2) and dtype of float32.
     '''
-    # Loading sound file
+ # Loading sound file
     y, sr = librosa.load(fpath, sr=hp.sr)
 
     dur = librosa.get_duration(y=y, sr=sr)
@@ -73,7 +91,8 @@ def spectrogram2wav(mag):
     Args:
       mag: A numpy array of (T, 1+n_fft//2)
     Returns:
-      wav: A 1-D numpy array.
+ 
+ wav: A 1-D numpy array.
     '''
     # transpose
     mag = mag.T
