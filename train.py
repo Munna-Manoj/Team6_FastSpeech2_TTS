@@ -46,15 +46,16 @@ def main():
             
             mel_pred, postnet_pred, attn_probs, stop_preds, attns_enc, attns_dec = m.forward(character, mel_input, pos_text, pos_mel)
 
-            stop_preds = stop_preds.squeeze(-1)
-            stop_preds = stop_preds.cuda()
-            stop_tokens = stop_tokens.cuda()
+            #stop_preds = stop_preds.squeeze(-1)
+            #stop_preds = stop_preds.cuda()
+            #stop_tokens = stop_tokens.cuda()
+            # MODEL IS NOT TRAINING WITH BCE LOSSm STOPLINEAR SHOULD BE TRAINED INDEPENDENTLY 
 
             mel_loss = nn.L1Loss()(mel_pred, mel)
             post_mel_loss = nn.L1Loss()(postnet_pred, mel)
-            stop_token_loss = nn.BCEWithLogitsLoss()(stop_preds, stop_tokens)
+            #stop_token_loss = nn.BCEWithLogitsLoss()(stop_preds, stop_tokens)
             
-            loss = mel_loss + post_mel_loss + stop_token_loss # let's try to train stoptoken
+            loss = mel_loss + post_mel_loss #+ stop_token_loss # let's try to train stoptoken
             
             writer.add_scalars('training_loss',{
                     'mel_loss':mel_loss,

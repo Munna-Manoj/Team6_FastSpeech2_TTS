@@ -29,11 +29,13 @@ class PrepareDataset(Dataset):
         return len(self.landmarks_frame)
 
     def __getitem__(self, idx):
-        wav_name = os.path.join(self.root_dir, self.landmarks_frame.ix[idx, 0]) + '.wav'
+        if 'kss' in hp.data_path:
+        	wav_name = os.path.join(self.root_dir, self.landmarks_frame.iloc[idx, 0].split('|')[0][2:])
+        else:
+        	wav_name = os.path.join(self.root_dir, self.landmarks_frame.ix[idx, 0]) + '.wav'
         mel, mag = get_spectrograms(wav_name)
         
         dur = get_duration(wav_name)
-        print(dur)
         
         np.save(wav_name[:-4] + '.pt', mel)
         np.save(wav_name[:-4] + '.mag', mag)
