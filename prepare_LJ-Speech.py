@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 import os
-from utils import get_spectrograms, get_duration
+from utils import get_spectrograms, get_duration, get_energy, get_pitch
 import hyperparams as hp
 import librosa
 
@@ -17,7 +17,6 @@ class PrepareDataset(Dataset):
         Args:
             csv_file (string): Path to the csv file with annotations.
             root_dir (string): Directory with all the wavs.
-
         """
         self.landmarks_frame = pd.read_csv(csv_file, sep='|', header=None)
         self.root_dir = root_dir
@@ -29,19 +28,21 @@ class PrepareDataset(Dataset):
         return len(self.landmarks_frame)
 
     def __getitem__(self, idx):
-        if 'kss' in hp.data_path:
-        	wav_name = os.path.join(self.root_dir, self.landmarks_frame.iloc[idx, 0].split('|')[0][2:])
-        else:
-        	wav_name = os.path.join(self.root_dir, self.landmarks_frame.ix[idx, 0]) + '.wav'
+        wav_name = os.path.join(self.root_dir, self.landmarks_frame.iloc[idx, 0]) + '.wav'
         mel, mag = get_spectrograms(wav_name)
-        
+        energy = get_energy(wav_name)
+        pitch = get_pitch(wav_name)
         dur = get_duration(wav_name)
+        #print(energy)
+        #print(pitch)
         
         np.save(wav_name[:-4] + '.pt', mel)
         np.save(wav_name[:-4] + '.mag', mag)
         np.save(wav_name[:-4] + '.dur', dur)
+        np.save(wav_name[:-4] + '.eng', energy)
+        np.save(wav_name[:-4] + '.pth', pitch)
 
-        sample = {'mel':mel, 'mag': mag, 'dur': dur}
+        sample = {'mel':mel, 'mag': mag, 'dur': dur, 'energy': energy, 'pitch':pitch}
         # + duration
 
         return sample
