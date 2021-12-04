@@ -7,7 +7,7 @@ import copy
 from collections import OrderedDict
 
 sys.path.append('../')
-import hyperparams as hp
+import hyperparams_stoplinear as hp
 from text.symbols import symbols
 
 def clones(module, N):
