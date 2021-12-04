@@ -61,7 +61,7 @@ class LJDatasets(Dataset):
         pos_mel = np.arange(1, mel.shape[0] + 1)
 
         sample = {'text': text, 'mel': mel, 'text_length': text_length, 'mel_input': mel_input, 'pos_mel': pos_mel,
-                  'pos_text': pos_text}
+                'pos_text': pos_text, 'duration': duration, 'pitch': pitch, 'energy': energy}
 
         return sample
 
@@ -103,12 +103,19 @@ def collate_fn_transformer(batch):
         text_length = [d['text_length'] for d in batch]
         pos_mel = [d['pos_mel'] for d in batch]
         pos_text = [d['pos_text'] for d in batch]
+        #added for pitch and energy
+        pitch = [d['pitch'] for d in batch]
+        energy = [d['energy'] for d in batch]
+
 
         text = [i for i, _ in sorted(zip(text, text_length), key=lambda x: x[1], reverse=True)]
         mel = [i for i, _ in sorted(zip(mel, text_length), key=lambda x: x[1], reverse=True)]
         mel_input = [i for i, _ in sorted(zip(mel_input, text_length), key=lambda x: x[1], reverse=True)]
         pos_text = [i for i, _ in sorted(zip(pos_text, text_length), key=lambda x: x[1], reverse=True)]
         pos_mel = [i for i, _ in sorted(zip(pos_mel, text_length), key=lambda x: x[1], reverse=True)]
+        #added for pitch and energy
+        pitch = [i for i, _ in sorted(zip(pitch, text_length), key = lambda x: x[1], reverse = True)]
+        energy = [i for i, _ in sorted(zip(energy, text_length), key = lambda x: x[1], reverse = True)]
         text_length = sorted(text_length, reverse=True)
         # PAD sequences with largest length of the batch
         text = _prepare_data(text).astype(np.int32)
@@ -116,6 +123,9 @@ def collate_fn_transformer(batch):
         mel_input = _pad_mel(mel_input)
         pos_mel = _prepare_data(pos_mel).astype(np.int32)
         pos_text = _prepare_data(pos_text).astype(np.int32)
+        pitch = _prepare_data(pitch).astype(np.int32)
+        energy = _prepare_data(energy).astype(np.int32)
+
 
         return t.LongTensor(text), t.FloatTensor(mel), t.FloatTensor(mel_input), t.LongTensor(pos_text), t.LongTensor(
             pos_mel), t.LongTensor(text_length)
