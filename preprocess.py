@@ -47,10 +47,11 @@ class LJDatasets(Dataset):
 
         #print(text)
         #text = normalize(text)
-        if '01012345678' in text:
-            text = re.sub('01012345678','',text)
-        if '010' in text:
-            text = re.sub('010','',text)
+        if 'kss' in hp.data_path:
+            if '01012345678' in text:
+                text = re.sub('01012345678','',text)
+            if '010' in text:
+                text = re.sub('010','',text)
         text = np.asarray(text_to_sequence(text, [hp.cleaners]), dtype=np.int32)
         #print(text)
         mel = np.load(wav_name[:-4] + '.pt.npy')
