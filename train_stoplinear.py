@@ -1,5 +1,5 @@
 from preprocess import get_dataset, DataLoader, collate_fn_transformer
-from network_stoplinear import *
+from network.network_stoplinear import *
 from tensorboardX import SummaryWriter
 import torchvision.utils as vutils
 import os
