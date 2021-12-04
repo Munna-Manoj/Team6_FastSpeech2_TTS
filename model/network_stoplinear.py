@@ -1,7 +1,9 @@
 from module_stoplinear import *
 from utils import get_positional_table, get_sinusoid_encoding_table
-import hyperparams_stoplinear as hp
 import copy
+
+sys.path.append('../')
+import hyperparams_stoplinear as hp
 
 class Encoder(nn.Module):
     """
