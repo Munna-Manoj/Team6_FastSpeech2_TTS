@@ -31,8 +31,12 @@ class PrepareDataset(Dataset):
     def __getitem__(self, idx):
         wav_name = os.path.join(self.root_dir, self.landmarks_frame.iloc[idx, 0]) + '.wav'
         mel, mag = get_spectrograms(wav_name)
-        energy = get_energy(wav_name)
-        pitch = get_pitch(wav_name)
+
+        energy_raw = get_energy(wav_name)
+        energy = (energy_raw-hp.energy_min)/(hp.energy_max - hp.energy_min)
+        pitch_raw  = get_pitch(wav_name)
+        pitch = (pitch_raw - hp.pitch_min)/(hp.pitch_max - hp.pitch_min)
+
         dur = get_duration(wav_name)
         #print(energy)
         #print(pitch)

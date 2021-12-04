@@ -29,6 +29,12 @@ data_path = './data/LJSpeech-1.1'
 #korean_data_path = ''
 checkpoint_path = './checkpoints'
 sample_path = './samples'
+#korean_data_energy_pitch_min_max
+pitch_min = 71.0
+pitch_max = 792.8
+energy_min = 0.0
+energy_max = 283.72
+
 
 sampling_rate =  22050
 hop_length = 256
