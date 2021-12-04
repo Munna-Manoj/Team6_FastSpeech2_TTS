@@ -39,4 +39,3 @@ energy_max = 283.72
 sampling_rate =  22050
 hop_length = 256
 filter_length = 1024
-
