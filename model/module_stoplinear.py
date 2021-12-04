@@ -2,11 +2,13 @@ import torch.nn as nn
 import torch as t
 import torch.nn.functional as F
 import math
-import hyperparams as hp
-from text.symbols import symbols
 import numpy as np
 import copy
 from collections import OrderedDict
+
+sys.path.append('../')
+import hyperparams as hp
+from text.symbols import symbols
 
 def clones(module, N):
     return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
