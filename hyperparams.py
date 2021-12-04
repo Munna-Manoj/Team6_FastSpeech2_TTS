@@ -1,4 +1,4 @@
-# Audio
+#Audio
 num_mels = 80
 n_fft = 2048
 sr = 22050
