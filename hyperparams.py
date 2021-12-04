@@ -1,3 +1,5 @@
+import os
+
 # Audio
 num_mels = 80
 n_fft = 2048
@@ -17,6 +19,7 @@ ref_db = 20
 
 outputs_per_step = 1
 
+n_iter = 60
 epochs = 10000
 lr = 0.001
 save_step = 2000
@@ -39,6 +42,9 @@ else:
 cleaners= 'korean_cleaners'  
 data_path = './data/kss' #  
 
+max_wav_value = 32768.0
 
 checkpoint_path = './checkpoints'
 sample_path = './samples'
+vocoder_pretrained_model_name = "vocgan_kss_pretrained_model_epoch_4500.pt"
+vocoder_pretrained_model_path = os.path.join("./checkpoints", vocoder_pretrained_model_name) 

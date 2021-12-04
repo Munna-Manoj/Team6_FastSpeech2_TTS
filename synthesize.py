@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import torch as t
 from utils import spectrogram2wav
 from scipy.io.wavfile import write
@@ -8,9 +10,10 @@ from model.network import ModelPostNet, Model
 from collections import OrderedDict
 from tqdm import tqdm
 import argparse
+import utils
 
 def load_checkpoint(step, model_name="transformer"):
-    state_dict = t.load('./checkpoint/checkpoint_%s_%d.pth.tar'% (model_name, step))   
+    state_dict = t.load('./checkpoints/checkpoint_%s_%d.pth.tar'% (model_name, step))   
     new_state_dict = OrderedDict()
     for k, value in state_dict['model'].items():
         key = k[7:]
@@ -26,6 +29,7 @@ def synthesis(text, args):
     m_post.load_state_dict(load_checkpoint(args.restore_step2, "postnet"))
 
     text = np.asarray(text_to_sequence(text, [hp.cleaners]))
+    print(text)
     text = t.LongTensor(text).unsqueeze(0)
     text = text.cuda()
     mel_input = t.zeros([1,1, 80]).cuda()
@@ -44,17 +48,24 @@ def synthesis(text, args):
             mel_pred, postnet_pred, attn, stop_token, _, attn_dec = m.forward(text, mel_input, pos_text, pos_mel)
             mel_input = t.cat([mel_input, mel_pred[:,-1:,:]], dim=1)
 
-        mag_pred = m_post.forward(postnet_pred)
+        print(postnet_pred.shape)
+        #mag_pred = m_post.forward(postnet_pred)
         
-    wav = spectrogram2wav(mag_pred.squeeze(0).cpu().numpy())
+        
+    #wav = spectrogram2wav(mag_pred.squeeze(0).cpu().numpy())
+    #postnet_pred = t.transpose(postnet_pred, 0, 1)
+    postnet_pred = t.squeeze(postnet_pred)
+    postnet_pred = t.transpose(postnet_pred, 0, 1)
+    vocoder = utils.get_vocgan(ckpt_path=hp.vocoder_pretrained_model_path)
+    wav = utils.vocgan_infer(postnet_pred, vocoder)   
     write(hp.sample_path + "/test.wav", hp.sr, wav)
     
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--restore_step1', type=int, help='Global step to restore checkpoint', default=172000)
-    parser.add_argument('--restore_step2', type=int, help='Global step to restore checkpoint', default=100000)
+    parser.add_argument('--restore_step1', type=int, help='Global step to restore checkpoint', default=98000)
+    parser.add_argument('--restore_step2', type=int, help='Global step to restore checkpoint', default=62000)
     parser.add_argument('--max_len', type=int, help='Global step to restore checkpoint', default=400)
 
     args = parser.parse_args()
-    synthesis("Transformer model is so fast!",args)
+    synthesis("가까운 시",args)

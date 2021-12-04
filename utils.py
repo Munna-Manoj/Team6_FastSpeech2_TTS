@@ -5,6 +5,9 @@ from scipy import signal
 import hyperparams as hp
 import torch as t
 
+from vocoder.vocgan_generator import Generator
+device = t.device('cuda' if t.cuda.is_available() else 'cpu')
+
 
 def get_spectrograms(fpath):
     '''Parse the wave file in `fpath` and
@@ -154,3 +157,34 @@ def guided_attention(N, T, g=0.2):
         for t_pos in range(W.shape[1]):
             W[n_pos, t_pos] = 1 - np.exp(-(t_pos / float(T) - n_pos / float(N)) ** 2 / (2 * g * g))
     return W
+
+
+
+def get_vocgan(ckpt_path, n_mel_channels=hp.num_mels, generator_ratio = [4, 4, 2, 2, 2, 2], n_residual_layers=4, mult=256, out_channels=1):
+
+    checkpoint = t.load(ckpt_path)
+    model = Generator(n_mel_channels, n_residual_layers,
+                        ratios=generator_ratio, mult=mult,
+                        out_band=out_channels)
+
+    model.load_state_dict(checkpoint['model_g'])
+    model.to(device).eval()
+
+    return model
+    
+#from scipy.io import wavfile
+
+def vocgan_infer(mel, vocoder):
+    model = vocoder
+
+    with t.no_grad():
+        if len(mel.shape) == 2:
+            mel = mel.unsqueeze(0)
+
+        audio = model.infer(mel).squeeze()
+        audio = hp.max_wav_value * audio[:-(hp.hop_length*10)]
+        audio = audio.clamp(min=-hp.max_wav_value, max=hp.max_wav_value-1)
+        audio = audio.short().cpu().detach().numpy()
+
+        #wavfile.write(path, hp.sampling_rate, audio)
+        return audio
